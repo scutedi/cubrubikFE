@@ -1,0 +1,127 @@
+/* 📁 AuthButtons.css */
+
+.auth-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 12px;
+}
+
+.btn-auth {
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.btn-auth:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Overlay-ul cu blur */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Cardul Modal */
+.auth-card {
+    background: rgb(6, 34, 44);
+    padding: 32px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 320px;
+    color: white;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.auth-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+/* Input-uri stilizate */
+.auth-input {
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.auth-input:focus {
+    border-color: #0f5c77;
+}
+
+.user-welcome {
+    color: white;
+    font-size: 0.95rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.user-welcome strong {
+    color: #00d4ff; /* O culoare care să iasă în evidență */
+}
+
+.logout-style:hover {
+    background: rgba(255, 77, 77, 0.2) !important;
+    border-color: rgba(255, 77, 77, 0.5) !important;
+}
+
+/* Butonul principal din interior */
+.btn-submit {
+    background: #0b3a4a;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-submit:hover {
+    background: #082d3a;
+}
+
+.btn-switch {
+    background: transparent;
+    color: #a1a1aa;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: underline;
+}
+
+.btn-close {
+    background: rgb(11, 58, 74);
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+}
