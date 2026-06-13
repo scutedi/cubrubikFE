@@ -1,4 +1,7 @@
 import { useState } from "react";
+// 1. Importăm componentele de Toast
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function Register({ onSuccess }) {
     const [username, setUsername] = useState('');
@@ -9,22 +12,43 @@ export function Register({ onSuccess }) {
             const response = await fetch('http://localhost:8080/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password, cubeState: "INITIAL_STATE" })
+                body: JSON.stringify({
+                    username,
+                    password,
+                    cubeState: "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB"
+                })
             });
 
             if (response.ok) {
-                alert("Cont creat cu succes! Acum te poți loga.");
-                onSuccess(); // Comută la formularul de login
+                // 2. Afișăm toast-ul de succes
+                toast.success(" Cont creat cu succes! Te poți loga.", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    theme: "colored",
+                });
+
+                // Așteptăm puțin să vadă user-ul mesajul înainte de a schimba pagina
+                setTimeout(() => {
+                    onSuccess();
+                }, 2000);
+
             } else {
-                alert("Eroare la înregistrare.");
+                toast.error("Eroare la înregistrare. Username-ul ar putea fi luat.");
             }
         } catch (error) {
-            alert("Eroare server.");
+            toast.error("Eroare severă la server.");
         }
     };
 
     return (
         <>
+            {/* 3. Adăugăm Container-ul de Toast oriunde în JSX */}
+            <ToastContainer />
+
             <input
                 className="auth-input"
                 placeholder="Choose Username"

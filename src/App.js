@@ -17,6 +17,8 @@ import {FloatingMenu} from "./Tutorial/TutorialMenu";
 import Logo from "./components/UI/Logo";
 import {applyFaceletStringToCubies} from "./components/Cube/cubeUtils";
 import SolutionViewer from "./components/Cube/SolutionViewer";
+import { saveCubeState, loadCubeState } from "./services/apiService";
+import SolutionControls from "./components/Cube/SolutionControls";
 
 const SERVICE_UUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
 const RX_CHAR_UUID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
@@ -392,26 +394,172 @@ export default function App() {
     }
   }, [orientationSaved, cubeGroupRef.current]);
 
+    const generateFaceletStringFromState = (cubeState) => {
 
-  const onFinishRotation = () => {
-    const { axis, clockwise, cubies: rotatingCubies } = currentRotation;
-    const newCubies = rotatingCubies.map(c => {
-      const newPos = axis === 'x' ? rotatePosAroundX(c.position, clockwise)
-                    : axis === 'y' ? rotatePosAroundY(c.position, clockwise)
-                    : rotatePosAroundZ(c.position, clockwise);
-      const newColors = axis === 'x' ? rotateColorsAroundX(c.colors, clockwise)
-                        : axis === 'y' ? rotateColorsAroundY(c.colors, clockwise)
+        const getFaceGridLocal = (cubies, axis, value, faceKey) => {
+
+            const faceCubies = cubies.filter(
+                c => c.position[['x', 'y', 'z'].indexOf(axis)] === value
+            );
+
+            const grid = Array(9).fill(null);
+
+            faceCubies.forEach(c => {
+
+                const [x, y, z] = c.position;
+
+                let row, col;
+
+                // U
+                if (axis === 'y' && value === 1) {
+                    row = 2 - (z + 1);
+                    col = x + 1;
+                }
+
+                // D
+                else if (axis === 'y' && value === -1) {
+                    row = z + 1;
+                    col = x + 1;
+                }
+
+                // F
+                else if (axis === 'z' && value === 1) {
+                    row = 2 - (y + 1);
+                    col = x + 1;
+                }
+
+                // B
+                else if (axis === 'z' && value === -1) {
+                    row = 2 - (y + 1);
+                    col = 2 - (x + 1);
+                }
+
+                // R
+                else if (axis === 'x' && value === 1) {
+                    row = 2 - (y + 1);
+                    col = 2 - (z + 1);
+                }
+
+                // L
+                else if (axis === 'x' && value === -1) {
+                    row = 2 - (y + 1);
+                    col = z + 1;
+                }
+
+                grid[row * 3 + col] = c.colors[faceKey];
+            });
+
+            return grid;
+        };
+
+        const colorToLetter = (color) => {
+
+            if (color === FACE_COLORS.U) return "U";
+            if (color === FACE_COLORS.R) return "R";
+            if (color === FACE_COLORS.F) return "F";
+            if (color === FACE_COLORS.D) return "D";
+            if (color === FACE_COLORS.L) return "L";
+            if (color === FACE_COLORS.B) return "B";
+
+            return "X";
+        };
+
+        const U = getFaceGridLocal(cubeState, 'y', 1, 'U');
+        const D = getFaceGridLocal(cubeState, 'y', -1, 'D');
+        const F = getFaceGridLocal(cubeState, 'z', 1, 'F');
+        const B = getFaceGridLocal(cubeState, 'z', -1, 'B');
+        const R = getFaceGridLocal(cubeState, 'x', 1, 'R');
+        const L = getFaceGridLocal(cubeState, 'x', -1, 'L');
+
+        const result =
+            U.map(colorToLetter).join("") +
+            R.map(colorToLetter).join("") +
+            F.map(colorToLetter).join("") +
+            D.map(colorToLetter).join("") +
+            L.map(colorToLetter).join("") +
+            B.map(colorToLetter).join("");
+
+        console.log("Cube string:", result);
+
+        return result;
+    };
+
+
+    const onFinishRotation = async () => {
+
+        const { axis, clockwise, cubies: rotatingCubies } = currentRotation;
+
+        const newCubies = rotatingCubies.map(c => {
+
+            const newPos =
+                axis === 'x'
+                    ? rotatePosAroundX(c.position, clockwise)
+                    : axis === 'y'
+                        ? rotatePosAroundY(c.position, clockwise)
+                        : rotatePosAroundZ(c.position, clockwise);
+
+            const newColors =
+                axis === 'x'
+                    ? rotateColorsAroundX(c.colors, clockwise)
+                    : axis === 'y'
+                        ? rotateColorsAroundY(c.colors, clockwise)
                         : rotateColorsAroundZ(c.colors, clockwise);
-      return { ...c, position: newPos, colors: newColors };
-    });
 
-    setCubies(prev => {
-      const rotatingKeys = new Set(rotatingCubies.map(c => c.key));
-      return [...prev.filter(c => !rotatingKeys.has(c.key)), ...newCubies];
-    });
-    setCurrentRotation(null);
-    setRotationQueue(q => q.slice(1));
-  };
+            return {
+                ...c,
+                position: newPos,
+                colors: newColors
+            };
+        });
+
+        setCubies(prev => {
+
+            const rotatingKeys =
+                new Set(rotatingCubies.map(c => c.key));
+
+            const updated = [
+                ...prev.filter(c => !rotatingKeys.has(c.key)),
+                ...newCubies
+            ];
+
+            // 🔥 SALVARE ÎN DB
+            setTimeout(async () => {
+
+                setUser(
+                    JSON.parse(localStorage.getItem("user"))
+                )
+
+                const userId = user?.id;
+
+                console.log("USER:", user);
+                console.log("USER ID:", userId);
+
+                if (userId) {
+
+                    const cubeString =
+                        generateFaceletStringFromState(updated);
+
+                    console.log("SALVEZ CUB:");
+                    console.log(cubeString);
+                    console.log("LUNGIME:", cubeString.length);
+
+                    await saveCubeState(userId, cubeString);
+
+                    console.log("CUB SALVAT CU SUCCES");
+                }
+                else {
+                    console.log("NU EXISTA USER LOGAT");
+                }
+
+            }, 0);
+
+            return updated;
+        });
+
+        setCurrentRotation(null);
+
+        setRotationQueue(q => q.slice(1));
+    };
 
 
   const handleCalibrate = () => {
@@ -453,6 +601,33 @@ export default function App() {
     const handlerRef = useRef(null);
     const listenerAttachedRef = useRef(false);
 
+
+    useEffect(() => {
+
+        const loadCube = async () => {
+
+            const token = localStorage.getItem("token");
+
+            if (!token) return;
+
+            const data = await loadCubeState(token);
+
+            if (data?.cube) {
+
+                setCubies(prev =>
+                    applyFaceletStringToCubies(
+                        prev,
+                        data.cube,
+                        FACE_COLORS
+                    )
+                );
+            }
+        };
+
+        loadCube();
+
+    }, []);
+
     useEffect(() => {
         handlerRef.current = handleNotifications;
     }, []);
@@ -473,6 +648,10 @@ export default function App() {
         // debug alte date
         // console.log("OTHER:", bytes);
     };
+
+    const [selection, setSelection] = useState(null);
+    const [remainingFirstMoves, setRemainingFirstMoves] = useState(0);
+
     const parseRotation = (bytes) => {
         const faceMap = {
             0: 'U',
@@ -502,14 +681,32 @@ export default function App() {
                                     face;
 
         setSolutionMoves(prev => {
+
             if (!prev || prev.length === 0) return prev;
 
-            // dacă mutarea făcută este prima din soluție
             if (prev[0] === move) {
-                return prev.slice(1); // o eliminăm
+
+                const updated = prev.slice(1);
+
+                // FIRST MODE
+                if (selection === "first") {
+
+                    setRemainingFirstMoves(old => {
+
+                        const next = old - 1;
+
+                        if (next <= 0) {
+                            setSelection(null);
+                        }
+
+                        return next;
+                    });
+                }
+
+                return updated;
             }
 
-            return prev; // altfel nu facem nimic
+            return prev;
         });
 
         setRotationQueue(q => [...q, { face, direction }]);
@@ -572,6 +769,8 @@ export default function App() {
 
         return result;
     };
+
+    const [user, setUser] = useState(null);
 
   const buttonStyle = {
     padding: '10px 16px',
@@ -646,6 +845,12 @@ export default function App() {
         // returnăm ceva să nu crape, dar în mod normal aici va fi culoarea vizibilă.
         return color || "X";
     };
+
+    useEffect(() => {
+        if (user?.cubeState) {
+            applyCubeFromString(user.cubeState);
+        }
+    }, [user?.cubeState]);
 
 
     const colorToLetter = (color) => {
@@ -775,6 +980,7 @@ export default function App() {
     // };
 
     const handleGenerateSolution = async () => {
+
         const faceletString = generateFaceletString();
 
         console.log("CENTRE:", {
@@ -787,7 +993,8 @@ export default function App() {
         });
 
         try {
-            const response = await fetch("http://localhost:8080/api/cube/colors", {
+
+            const response = await fetch("http://localhost:8080/api/cube/solution", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ cube: faceletString })
@@ -802,12 +1009,26 @@ export default function App() {
                 .split(" ")
                 .filter(m => m !== "." && m !== "");
 
+            // 🔥 AICI
+            if (selection === "first") {
+
+                const firstMove = rawMoves[0];
+
+                if (firstMove.endsWith("2")) {
+                    setRemainingFirstMoves(2);
+                } else {
+                    setRemainingFirstMoves(1);
+                }
+            }
+
             const moves = expandMoves(rawMoves);
 
             setSolutionMoves(moves);
 
         } catch (error) {
+
             console.error("Eroare la trimiterea cubului:", error);
+
         }
     };
 
@@ -988,11 +1209,11 @@ export default function App() {
     background: '#007991',
   };
 
-    const handleApplyString = () => {
-        const str = "RBBFULFFDUBRFRUFBFUULFFRDDRLULLDRRRULLBDLDBDBFUULBBDRD";
+    const applyCubeFromString = (cubeStateString) => {
+        if (!cubeStateString) return;
 
         setCubies(prev =>
-            applyFaceletStringToCubies(prev, str, FACE_COLORS)
+            applyFaceletStringToCubies(prev, cubeStateString, FACE_COLORS)
         );
     };
 
@@ -1009,6 +1230,7 @@ export default function App() {
 
   return (
 
+
   <div style={{
     background: 'radial-gradient(circle at center, #023d49ff, #222E50)',
     height: '100vh',
@@ -1019,6 +1241,7 @@ export default function App() {
     position: 'relative',
   }}>
     {/* HAMBURGER MENU */}
+      {user && (
     <button
       onClick={() => {
         setSidebarOpen(!sidebarOpen)
@@ -1034,24 +1257,18 @@ export default function App() {
     >
       ☰
     </button>
-      <button
-          onClick={handleGenerateSolution}
-          style={{
-              ...buttonStyle,
-              ...(hoveredButton === 'solve' ? buttonHoverStyle : {}),
-          }}
-          onMouseEnter={() => setHoveredButton('solve')}
-          onMouseLeave={() => setHoveredButton(null)}
-      >
-          🧠 Generează Soluția
-      </button>
-          <AuthButtons
+          )}
+
+
+          <AuthButtons user={user} setUser={setUser}
               onOpen={handleAuthOpen}
+                       onLogout={resetColors}
           />
       <FloatingMenu/>
       <Logo />
 
     {/* SIDEBAR LATERAL */}
+    {user && (
     <div style={sidebarStyle}>
         <h1>RubikWeb</h1>
         <button
@@ -1220,6 +1437,7 @@ export default function App() {
         </button>
 
       </div>
+      )}
 
 
 
@@ -1278,7 +1496,14 @@ export default function App() {
 
       </div>
 
-      <SolutionViewer solution={solutionMoves} />
+      {user && !showColorPicker && (
+          <SolutionControls
+          solutionMoves={solutionMoves}
+          selection={selection} // Prop nou
+          setSelection={setSelection} // Prop nou
+          onGenerateSolution={handleGenerateSolution}
+          />
+      )}
 
       {/* SELECTOR DE CULORI */}
       {showColorPicker && (

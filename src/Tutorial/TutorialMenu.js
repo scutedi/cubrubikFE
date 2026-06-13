@@ -6,10 +6,10 @@ export function FloatingMenu() {
     const [activeModal, setActiveModal] = useState(null); // Pentru fereastra mare (blur)
 
     const menuItems = [
-        { id: 1, label: "Cum miști cubul?" },
-        { id: 2, label: "Schimbare Culori" },
-        { id: 3, label: "Setări Cameră" },
-        { id: 4, label: "Salvare Proiect" }
+        { id: 1, label: "Metoda LBL" },
+        { id: 2, label: "Metoda CFOP" },
+        { id: 3, label: "Metoda Roux" },
+        { id: 4, label: "Notatii oficiale ale miscarilor" }
     ];
 
     // --- STILURI ---

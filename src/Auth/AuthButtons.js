@@ -4,9 +4,8 @@ import { Login } from "./Login";
 import { Register } from "./Register";
 import "./AuthButtons.css";
 
-export function AuthButtons() {
-    const [open, setOpen] = useState(null);
-    const [user, setUser] = useState(null); // Aici ținem datele userului logat
+export function AuthButtons({ user, setUser, onLogout }) {
+    const [open, setOpen] = useState(null);// Aici ținem datele userului logat
 
     // 1. Când se încarcă pagina, verificăm dacă există un user salvat în browser
     useEffect(() => {
@@ -22,6 +21,9 @@ export function AuthButtons() {
     const handleLogout = () => {
         localStorage.removeItem("user"); // Ștergem din memoria browserului
         localStorage.removeItem("cubeState");
+        if (onLogout) {
+            onLogout();
+        }
         setUser(null); // Resetăm starea ca să apară iar Login/Register
     };
 
