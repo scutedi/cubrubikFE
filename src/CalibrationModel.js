@@ -8,7 +8,12 @@ const RX_CHAR_UUID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
 const TX_CHAR_UUID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
 
 const FACE_COLORS = {
-  U: '#32CD32', D: '#2775B6', F: '#FA6800', B: 'red', L: 'white', R: '#FFD32C'
+    U: "#2775B6",
+    D: "#32CD32",
+    F: "#FFFFFF",
+    B: "#FFD32C",
+    L: "#FA6800",
+    R: "#FF0000",
 };
 
 const PRESET_COLORS = [

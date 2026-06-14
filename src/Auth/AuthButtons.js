@@ -5,31 +5,28 @@ import { Register } from "./Register";
 import "./AuthButtons.css";
 
 export function AuthButtons({ user, setUser, onLogout }) {
-    const [open, setOpen] = useState(null);// Aici ținem datele userului logat
+    const [open, setOpen] = useState(null);
 
-    // 1. Când se încarcă pagina, verificăm dacă există un user salvat în browser
     useEffect(() => {
         const savedUser = localStorage.getItem("user");
         if (savedUser) {
-            setUser(JSON.parse(savedUser)); // Transformăm string-ul înapoi în obiect
+            setUser(JSON.parse(savedUser));
         }
-    }, []);
+    }, [setUser]);
 
     const closeModal = () => setOpen(null);
 
-    // 2. Funcție pentru Logout
     const handleLogout = () => {
-        localStorage.removeItem("user"); // Ștergem din memoria browserului
+        localStorage.removeItem("user");
         localStorage.removeItem("cubeState");
         if (onLogout) {
             onLogout();
         }
-        setUser(null); // Resetăm starea ca să apară iar Login/Register
+        setUser(null);
     };
 
-    // 3. Funcție apelată de LoginForm când logarea e cu succes
     const handleLoginSuccess = (userData) => {
-        setUser(userData); // Setăm userul (acum interfața se va schimba)
+        setUser(userData);
         closeModal();
     };
 
@@ -37,7 +34,6 @@ export function AuthButtons({ user, setUser, onLogout }) {
         <div className="auth-container">
             <AnimatePresence mode="wait">
                 {!user ? (
-                    /* CAZUL 1: USERUL NU ESTE LOGAT */
                     <motion.div
                         key="logged-out"
                         initial={{ opacity: 0 }}
@@ -53,7 +49,6 @@ export function AuthButtons({ user, setUser, onLogout }) {
                         </button>
                     </motion.div>
                 ) : (
-                    /* CAZUL 2: USERUL ESTE LOGAT - Afișăm numele lui */
                     <motion.div
                         key="logged-in"
                         initial={{ opacity: 0, y: -10 }}
@@ -70,7 +65,6 @@ export function AuthButtons({ user, setUser, onLogout }) {
                 )}
             </AnimatePresence>
 
-            {/* Modalul pentru Login/Register */}
             <AnimatePresence>
                 {open && (
                     <motion.div className="modal-overlay" onClick={closeModal} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>

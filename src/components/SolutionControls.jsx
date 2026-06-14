@@ -56,7 +56,6 @@ export default function SolutionControls({
                     </motion.div>
                 )}
 
-                {/* 2. LOADING - DISCRET JOS */}
                 {loading && (
                     <motion.div
                         key="loading"
@@ -69,7 +68,6 @@ export default function SolutionControls({
                     </motion.div>
                 )}
 
-                {/* 3. SOLUTION VIEWER - RĂMÂNE LATERAL PENTRU VIZIBILITATE CUB */}
                 {selection !== null && !loading && (
                         <SolutionViewer
                             solution={getMoves()}
@@ -103,10 +101,10 @@ export default function SolutionControls({
     );
 }
 
-// --- STILURI MIJLOC JOS ---
+
 const bottomCenterContainer = {
     position: "fixed",
-    bottom: "30px", // Distanța față de marginea de jos
+    bottom: "30px",
     left: "50%",
     display: "flex",
     gap: "12px",

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function FloatingMenu() {
-    const [isOpen, setIsOpen] = useState(false); // Pentru meniul mic
-    const [activeModal, setActiveModal] = useState(null); // Pentru fereastra mare (blur)
+    const [isOpen, setIsOpen] = useState(false);
+    const [activeModal, setActiveModal] = useState(null);
 
     const menuItems = [
         { id: 1, label: "Metoda LBL" },
@@ -12,7 +12,6 @@ export function FloatingMenu() {
         { id: 4, label: "Notatii oficiale ale miscarilor" }
     ];
 
-    // --- STILURI ---
     const mainButtonStyle = {
         padding: "12px 24px",
         borderRadius: "12px",
@@ -39,7 +38,6 @@ export function FloatingMenu() {
 
     return (
         <>
-            {/* 1. MODALUL MARE + BLUR (Apare doar când selectezi o opțiune) */}
             <AnimatePresence>
                 {activeModal && (
                     <motion.div
@@ -83,11 +81,10 @@ export function FloatingMenu() {
                 )}
             </AnimatePresence>
 
-            {/* 2. BUTONUL TUTORIAL ȘI CELE 4 OPȚIUNI */}
             <div style={{ position: "fixed", bottom: 30, right: 30, zIndex: 9000, display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
 
                 <AnimatePresence>
-                    {isOpen && !activeModal && ( // Ascundem lista mică dacă modalul e deschis
+                    {isOpen && !activeModal && (
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}

@@ -8,7 +8,6 @@ export function Login({ onSuccess }) {
     const handleLogin = async () => {
         setErrorMessage('');
 
-        // 🔥 DEBUG (foarte important)
         console.log("LOGIN TRY:", username, password);
 
         try {
@@ -18,7 +17,6 @@ export function Login({ onSuccess }) {
                 body: JSON.stringify({ username, password })
             });
 
-            // 🔥 citim o singură dată
             const text = await response.text();
             const data = text ? JSON.parse(text) : null;
 
@@ -27,7 +25,7 @@ export function Login({ onSuccess }) {
             }
 
             const userData = {
-                id: data.id,                 // ✔️ standardizat
+                id: data.id,
                 username: data.username,
                 cubeState: data.cubeState || ""
             };

@@ -1,4 +1,3 @@
-/* 📁 AuthButtons.css */
 
 .auth-container {
     position: absolute;
@@ -27,7 +26,6 @@
     transform: translateY(-2px);
 }
 
-/* Overlay-ul cu blur */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -42,7 +40,6 @@
     z-index: 9999;
 }
 
-/* Cardul Modal */
 .auth-card {
     background: rgb(6, 34, 44);
     padding: 32px;
@@ -62,7 +59,6 @@
     text-align: center;
 }
 
-/* Input-uri stilizate */
 .auth-input {
     padding: 12px 16px;
     border-radius: 10px;
@@ -84,7 +80,7 @@
 }
 
 .user-welcome strong {
-    color: #00d4ff; /* O culoare care să iasă în evidență */
+    color: #00d4ff;
 }
 
 .logout-style:hover {
@@ -92,7 +88,6 @@
     border-color: rgba(255, 77, 77, 0.5) !important;
 }
 
-/* Butonul principal din interior */
 .btn-submit {
     background: #0b3a4a;
     color: white;

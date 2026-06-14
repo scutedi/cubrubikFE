@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from "react";
 
-// 🔥 import imagini (rămân aceleași)
-import Limg from "../../assets/L.png";
-import Rimg from "../../assets/R.png";
-import Uimg from "../../assets/U.png";
-import Dimg from "../../assets/D.png";
-import Fimg from "../../assets/F.png";
-import Bimg from "../../assets/B.png";
-import Lpimg from "../../assets/L'.png";
-import Rpimg from "../../assets/R'.png";
-import Upimg from "../../assets/U'.png";
-import Dpimg from "../../assets/D'.png";
-import Fpimg from "../../assets/F'.png";
-import Bpimg from "../../assets/B'.png";
-import L2img from "../../assets/L2.png";
-import R2img from "../../assets/R2.png";
-import U2img from "../../assets/U2.png";
-import D2img from "../../assets/D2.png";
-import F2img from "../../assets/F2.png";
-import B2img from "../../assets/B2.png";
+import Limg from "../assets/L.png";
+import Rimg from "../assets/R.png";
+import Uimg from "../assets/U.png";
+import Dimg from "../assets/D.png";
+import Fimg from "../assets/F.png";
+import Bimg from "../assets/B.png";
+import Lpimg from "../assets/L'.png";
+import Rpimg from "../assets/R'.png";
+import Upimg from "../assets/U'.png";
+import Dpimg from "../assets/D'.png";
+import Fpimg from "../assets/F'.png";
+import Bpimg from "../assets/B'.png";
+import L2img from "../assets/L2.png";
+import R2img from "../assets/R2.png";
+import U2img from "../assets/U2.png";
+import D2img from "../assets/D2.png";
+import F2img from "../assets/F2.png";
+import B2img from "../assets/B2.png";
 
 const moveImages = {
     "L": Limg, "L'": Lpimg, "L2": L2img,
@@ -38,28 +37,20 @@ const COLORS = {
     btnBgHover: 'rgb(16, 78, 99)',
 };
 
-// 🔥 import imagini (rămân aceleași)
-// ... (păstrează toate importurile tale de imagini aici)
-
 export default function SolutionViewer({ solution, onFinish }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
 
-    // Resetăm indexul doar când primim o soluție complet nouă
     useEffect(() => {
         setCurrentIndex(0);
     }, [solution]);
 
-    // Schimbăm condiția: Nu mai returnăm null dacă indexul este la final
-    // Lăsăm butonul "Finish" să se ocupe de închidere prin onFinish()
     if (!solution || solution.length === 0) {
         return null;
     }
 
     const moves = solution;
 
-    // Protecție pentru index: dacă indexul a depășit lungimea (safety check)
-    // afișăm ultimul pas disponibil
     const safeIndex = Math.min(currentIndex, moves.length - 1);
     const currentMove = moves[safeIndex];
 
@@ -67,7 +58,6 @@ export default function SolutionViewer({ solution, onFinish }) {
         if (currentIndex < moves.length - 1) {
             setCurrentIndex(prev => prev + 1);
         } else {
-            // Aici se declanșează magia: doar la click pe Finish se închide
             if (onFinish) onFinish();
         }
     };
@@ -100,7 +90,6 @@ export default function SolutionViewer({ solution, onFinish }) {
             transform: 'translateY(-50%)',
             width: '180px',
             backgroundColor: COLORS.bg,
-            // ... restul stilurilor tale rămân identice
             backdropFilter: 'blur(12px)',
             padding: '24px 18px',
             borderRadius: '24px',
@@ -123,7 +112,6 @@ export default function SolutionViewer({ solution, onFinish }) {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 style={{
-                    // ... stilul tău de animație pentru text
                     position: 'relative',
                     width: '100%',
                     height: '100px',
@@ -139,7 +127,6 @@ export default function SolutionViewer({ solution, onFinish }) {
             >
                 {currentMove}
 
-                {/* Tooltip-ul cu imaginea mutării */}
                 {isHovered && moveImages[currentMove] && (
                     <div className="move-tooltip" style={tooltipStyle}>
                         <img src={moveImages[currentMove]} alt={currentMove} style={imageStyle} />
@@ -175,12 +162,11 @@ export default function SolutionViewer({ solution, onFinish }) {
                 </button>
             </div>
 
-            <style>{/* Păstrează animațiile tale CSS */}</style>
+            <style></style>
         </div>
     );
 }
 
-// Stiluri extrase pentru curățenie (păstrează-le pe ale tale dacă preferi)
 const closeBtnStyle = { position: 'absolute', top: '12px', right: '12px', background: 'transparent', border: 'none', color: COLORS.textSecondary, cursor: 'pointer' };
 const stepLabelStyle = { fontSize: '11px', fontWeight: '700', color: COLORS.textSecondary, marginBottom: '15px', letterSpacing: '1px', textTransform: 'uppercase' };
 const tooltipStyle = { position: 'absolute', right: '135%', top: '50%', transform: 'translateY(-50%)', backgroundColor: COLORS.bg, borderRadius: '20px', padding: '15px', boxShadow: '0 15px 40px rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.05)' };

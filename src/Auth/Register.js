@@ -1,5 +1,4 @@
 import { useState } from "react";
-// 1. Importăm componentele de Toast
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -20,7 +19,6 @@ export function Register({ onSuccess }) {
             });
 
             if (response.ok) {
-                // 2. Afișăm toast-ul de succes
                 toast.success(" Cont creat cu succes! Te poți loga.", {
                     position: "top-right",
                     autoClose: 3000,
@@ -31,7 +29,6 @@ export function Register({ onSuccess }) {
                     theme: "colored",
                 });
 
-                // Așteptăm puțin să vadă user-ul mesajul înainte de a schimba pagina
                 setTimeout(() => {
                     onSuccess();
                 }, 2000);
@@ -46,7 +43,6 @@ export function Register({ onSuccess }) {
 
     return (
         <>
-            {/* 3. Adăugăm Container-ul de Toast oriunde în JSX */}
             <ToastContainer />
 
             <input
