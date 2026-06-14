@@ -17,7 +17,6 @@ export const letterToColor = (letter, FACE_COLORS) => {
 
 export const applyFaceletStringToCubies = (cubies, faceletString, FACE_COLORS) => {
     const faces = parseFaces(faceletString);
-    console.log(faceletString)
     return cubies.map(cubie => {
         const [x, y, z] = cubie.position;
         let newColors = { ...cubie.colors };

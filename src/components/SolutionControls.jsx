@@ -5,6 +5,7 @@ import SolutionViewer from "./SolutionViewer";
 export default function SolutionControls({
                                              solutionMoves
                                              , selection, setSelection,
+                                             onCloseSolution,
                                              onGenerateSolution
                                          }) {
     const [loading, setLoading] = useState(false);
@@ -30,8 +31,7 @@ export default function SolutionControls({
     return (
         <>
             <AnimatePresence mode="wait">
-                {/* 1. BUTOANELE MICI - MIJLOC JOS */}
-                {selection === null && (
+                {(selection === null || solutionMoves.length === 0) && (
                     <motion.div
                         key="buttons"
                         initial={{ opacity: 0, y: 50, x: "-50%" }}
@@ -68,10 +68,13 @@ export default function SolutionControls({
                     </motion.div>
                 )}
 
-                {selection !== null && !loading && (
+                {selection !== null && solutionMoves.length > 0 && !loading && (
                         <SolutionViewer
                             solution={getMoves()}
-                            onFinish={() => setSelection(null)}
+                            onFinish={() => {
+                                setSelection(null);
+                                onCloseSolution?.();
+                            }}
                         />
                 )}
             </AnimatePresence>

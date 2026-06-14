@@ -8,8 +8,6 @@ export function Login({ onSuccess }) {
     const handleLogin = async () => {
         setErrorMessage('');
 
-        console.log("LOGIN TRY:", username, password);
-
         try {
             const response = await fetch('http://localhost:8080/api/auth/login', {
                 method: 'POST',
@@ -29,8 +27,6 @@ export function Login({ onSuccess }) {
                 username: data.username,
                 cubeState: data.cubeState || ""
             };
-
-            console.log("LOGIN SUCCESS:", userData);
 
             localStorage.setItem("user", JSON.stringify(userData));
 

@@ -133,7 +133,6 @@ export function useRubikCube({ onRotationComplete, isConfigMode = false , config
         );
     }, []);
 
-    // 🔥 IMPORTANT: verifică dacă mai există gri
     const hasUnfilled = cubies.some((c) =>
         Object.values(c.colors).some((col) => col == null)
     );

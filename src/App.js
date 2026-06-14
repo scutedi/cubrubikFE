@@ -25,17 +25,13 @@ export default function App() {
     const [activeButton, setActiveButton] = useState(null);
     const [showColorPicker, setShowColorPicker] = useState(false);
     const [selectedColor, setSelectedColor] = useState(null);
-    const [configSnapshot, setConfigSnapshot] = useState(null);
     const [isConfigMode, setIsConfigMode] = useState(false);
     const [configCubies, setConfigCubies] = useState(null);
 
-    // Solution-following state.
     const [solutionMoves, setSolutionMoves] = useState([]);
     const [selection, setSelection] = useState(null);
     const [remainingFirstMoves, setRemainingFirstMoves] = useState(0);
 
-
-    // Persist the cube to the backend after every completed turn.
     const saveCube = useCallback((facelet) => {
         const stored = JSON.parse(localStorage.getItem("user") || "null");
         const userId = stored?.id;
@@ -43,7 +39,7 @@ export default function App() {
         if (!userId) return;
 
         saveCubeState(userId, facelet)
-            .then(() => console.log("saved"))
+            .then()
             .catch(console.error);
     }, []);
 
@@ -56,11 +52,8 @@ export default function App() {
         resetColors,
         applyFacelet,
         isFullyColored,
-        replaceCubies,
     } = useRubikCube({ onRotationComplete: saveCube , isConfigMode, setConfigCubies, configCubies});
 
-    // A physical turn detected by the GoCube: consume the next solution move if it
-    // matches, then animate the turn.
     const handleDeviceRotation = useCallback(
         ({ face, direction, move }) => {
             setSolutionMoves((prev) => {
@@ -79,6 +72,10 @@ export default function App() {
         [enqueueRotation, selection]
     );
 
+    const onCloseSolution = () => {
+        setSolutionMoves([]);
+    };
+
     const { status, connect, startNotifications, stopNotifications } =
         useGoCube(handleDeviceRotation);
 
@@ -95,7 +92,6 @@ export default function App() {
     }, [user, applyFacelet]);
 
     useEffect(() => {
-        console.log("CUBIES CHANGE DETECTED:", cubies);
     }, [cubies]);
 
     const requestSolution = useCallback(async () => {
@@ -117,8 +113,6 @@ export default function App() {
             console.error("Eroare la generarea soluției:", err);
         }
     }, [cubies, selection]);
-
-    // --- Sidebar actions -------------------------------------------------------
 
     const openCube = async () => {
         setIsConfigMode(false);
@@ -151,7 +145,6 @@ export default function App() {
             for (const face of Object.keys(c.colors)) {
                 const originalColor = c.colors[face];
 
-                // dacă e centru → păstrează culoarea
                 if (c.position.includes(0) && Object.values(c.position).filter(v => v === 0).length === 2) {
                     newColors[face] = originalColor;
                 }
@@ -169,7 +162,7 @@ export default function App() {
         setConfigCubies(base);
     };
 
-    const calibrate = () => setActiveButton("calibrate"); // placeholder for future calibration UI
+    const calibrate = () => setActiveButton("calibrate");
 
     const connectBluetooth = () => {
         connect();
@@ -187,9 +180,7 @@ export default function App() {
     const saveConfig = async () => {
         if (!user?.id || !configCubies) return;
 
-        // 🚫 BLOCK SAVE dacă există gri
         if (!hasNoGrey(configCubies)) {
-            console.log("NU poți salva: mai există spații gri");
             return;
         }
 
@@ -212,25 +203,18 @@ export default function App() {
         startNotifications();
         setActiveButton("cube");
 
-        // 🔥 cub complet solved (REAL, colorat corect)
         const solved = createSolvedCubies();
 
-        // optional: salvezi în DB starea solved
         const facelet = generateFaceletString(solved);
 
         try {
             await saveCubeState(user.id, facelet);
-            console.log("RESET → SOLVED CUBE SAVED");
         } catch (err) {
             console.error(err);
         }
 
         await openCube();
     };
-
-    // --- Render ----------------------------------------------------------------
-
-
 
     return (
         <div style={appBackground}>
@@ -275,6 +259,7 @@ export default function App() {
                     solutionMoves={solutionMoves}
                     selection={selection}
                     setSelection={setSelection}
+                    onCloseSolution={onCloseSolution}
                     onGenerateSolution={requestSolution}
                 />
             )}
