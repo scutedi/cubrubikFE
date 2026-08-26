@@ -13,7 +13,7 @@ export const FACE_COLORS = {
 
 export const GREY = "#606060";
 
-export const PRESET_COLORS = ["#32CD32", "#2775B6", "#FA6800", "red", "white", "#FFD32C"];
+export const PRESET_COLORS = ["#32CD32", "#2775B6", "#FA6800", "#FF0000", "#FFFFFF", "#FFD32C"];
 
 export const FACE_INDEX_TO_NAME = ["R", "L", "U", "D", "F", "B"];
 

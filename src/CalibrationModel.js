@@ -17,9 +17,8 @@ const FACE_COLORS = {
 };
 
 const PRESET_COLORS = [
-  { pos: [1, 1, 1], colors: { U: '#0000FF', R: '#FF00FF', F: '#00FFFF' } },
-  { pos: [-1, -1, -1], colors: { D: '#FFFF00', L: '#FFA500', B: '#800080' } },
-  // poți completa cu alte cubies, dar e doar un exemplu să se vadă diferența
+  { pos: [1, 1, 1], colors: { U: '#2775B6', R: '#FF0000', F: '#FFFFFF' } },
+  { pos: [-1, -1, -1], colors: { D: '#32CD32', L: '#FA6800', B: '#FFD32C' } },
 ];
 
 function createCubies() {
@@ -57,7 +56,7 @@ function Cubie({ position, colors, onFaceClick }) {
   };
 
   return (
-    <group position={position}>
+    <group position={position} rotation={[0, Math.PI, 0]}>
       <mesh ref={meshRef} material={materials} onClick={handleClick}>
         <boxGeometry args={[1, 1, 1]} />
       </mesh>
@@ -120,7 +119,7 @@ function RotatingGroup({ cubies, axis, clockwise, onFinish }) {
 
     if (t === 1) {
       onFinish();
-      start.current = null; // reset for safety
+      start.current = null;
     }
   });
 
@@ -168,7 +167,7 @@ export default function App() {
   };
 
   const handleFaceClick = (pos, face) => {
-    if (!selectedColor) return; // Dacă nu avem culoare selectată, nu facem nimic
+    if (!selectedColor) return;
   
     if (isMiddleFaceCubie(pos)) return; 
     setCubies(oldCubies => {
@@ -203,7 +202,6 @@ export default function App() {
   };
 
   useEffect(() => {
-    // NU începe rotație nouă dacă există deja una în curs
     if (currentRotation !== null) return;
     if (rotationQueue.length === 0) return;
 
@@ -262,7 +260,6 @@ export default function App() {
 
   return (
     <div style={{ backgroundColor: '#426B69', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* BARA DE SUS */}
       <header
         style={{
           backgroundColor: '#222E50',
@@ -278,9 +275,6 @@ export default function App() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>GoCube App</h1>
           <div>
-            {/* { showButtonConfigurare && (
-            <button onClick={() => {handleButtonClick(); setShowButtonConfigurare(false);}} style={{ marginRight: 10 , borderRadius: 20, backgroundColor: '#8BB174'}}> Configureaza cubul </button>
-            )} */}
             <button onClick={handleCalibrate} style={{ marginRight: 10 , borderRadius: 20, backgroundColor: '#8BB174'}}>Calibrează</button>
             <button onClick={connectGoCube} style={{ marginRight: 10 , borderRadius: 20 , backgroundColor: '#8BB174'}}>
               Conectează-te
@@ -289,8 +283,7 @@ export default function App() {
           </div>
         </div>
       </header>
-  
-      {/* CANVAS 3D */}
+
         <div style={{ flex: 5, marginTop: '-70px' }}>
         <Canvas camera={{ position: [7, 7, 7], fov: 50 }}>
           <ambientLight />
@@ -317,8 +310,7 @@ export default function App() {
                     />
                   );
                 }
-  
-                // Logica pentru configurare
+
                 const [x, y, z] = c.position;
                 const isCenter = x === 0 && y === 0 && z === 0;
                 const isNeighbor = !isCenter && (Math.abs(x) <= 1 && Math.abs(y) <= 1 && Math.abs(z) <= 1);
@@ -351,8 +343,7 @@ export default function App() {
           <OrbitControls />
         </Canvas>
       </div>
-  
-      {/* SELECTOR DE CULORI */}
+
       {showColorPicker && (
       <div
         style={{
@@ -383,10 +374,6 @@ export default function App() {
             title={color}
           />
         ))}
-        {/* <button onClick={() => {resetColors(); setShowColorPicker(prev => !prev); setShowButtonConfigurare(true);}} style={{ marginRight: 10 , borderRadius: 20, backgroundColor: '#8BB174'}}>
-          Resetare Cub
-        </button> */}
-        {/* <button onClick={() => {setShowColorPicker(prev => !prev); setShowButtonConfigurare(true);}} disabled={!isCubeFullyColored} style={{ marginRight: 10 , borderRadius: 20, backgroundColor: '#8BB174'}}> Salvare configurare </button> */}
       </div>
     )}
     </div>

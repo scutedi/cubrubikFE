@@ -19,10 +19,24 @@ export function useRubikCube({ onRotationComplete, isConfigMode = false , config
     const [cubies, setCubies] = useState(createSolvedCubies);
     const [rotationQueue, setRotationQueue] = useState([]);
     const [currentRotation, setCurrentRotation] = useState(null);
+    const COLOR_LIMIT = 9;
 
     const enqueueRotation = useCallback((move) => {
         setRotationQueue((q) => [...q, move]);
     }, []);
+
+    const getColorCounts = (cubies) => {
+        const counts = {};
+
+        for (const c of cubies) {
+            for (const col of Object.values(c.colors)) {
+                if (!col || col === GREY) continue;
+                counts[col] = (counts[col] || 0) + 1;
+            }
+        }
+
+        return counts;
+    };
 
     useEffect(() => {
         if (currentRotation || rotationQueue.length === 0) return;
@@ -66,6 +80,7 @@ export function useRubikCube({ onRotationComplete, isConfigMode = false , config
         setRotationQueue((q) => q.slice(1));
     }, [currentRotation, onRotationComplete]);
 
+
     const resetColors = useCallback(() => {
         setCubies((prev) =>
             prev.map((c) => ({
@@ -79,52 +94,50 @@ export function useRubikCube({ onRotationComplete, isConfigMode = false , config
         setCubies(newCubies);
     }, []);
 
-    // 🔥 CONFIG MODE PAINT
-    const paintFace = useCallback((position, face, color, sourceCubies) => {
-        if (!isConfigMode) return;
-        if (!color) return;
-
-        if (isFaceCenter(position)) return;
+    const paintFace = useCallback((position, face, color) => {
+        if (!isConfigMode || !color) return;
 
         setConfigCubies(prev => {
             if (!prev) return prev;
 
-            const idx = prev.findIndex(
-                c =>
-                    c.position[0] === position[0] &&
-                    c.position[1] === position[1] &&
-                    c.position[2] === position[2]
+            const counts = getColorCounts(prev);
+
+            const targetCubie = prev.find(c =>
+                c.position[0] === position[0] &&
+                c.position[1] === position[1] &&
+                c.position[2] === position[2]
             );
 
-            if (idx === -1) return prev;
+            if (!targetCubie) return prev;
 
-            const updated = [...prev];
+            const current = targetCubie.colors[face];
+            const isRemoving = current === color;
 
-            const current = updated[idx].colors[face];
-
-            // toggle off → gri
-            if (current === color) {
-                updated[idx] = {
-                    ...updated[idx],
-                    colors: {
-                        ...updated[idx].colors,
-                        [face]: "#606060"
-                    }
-                };
-                return updated;
+            if (!isRemoving && (counts[color] || 0) >= COLOR_LIMIT) {
+                toast.error(`Ai atins limita de ${COLOR_LIMIT} pentru culoarea ${color}`);
+                return prev;
             }
 
-            updated[idx] = {
-                ...updated[idx],
-                colors: {
-                    ...updated[idx].colors,
-                    [face]: color
-                }
-            };
+            return prev.map(c => {
+                const same =
+                    c.position[0] === position[0] &&
+                    c.position[1] === position[1] &&
+                    c.position[2] === position[2];
 
-            return updated;
+                if (!same) return c;
+
+                const newColor = isRemoving ? GREY : color;
+
+                return {
+                    ...c,
+                    colors: {
+                        ...c.colors,
+                        [face]: newColor
+                    }
+                };
+            });
         });
-    }, [isConfigMode, configCubies]);
+    }, [isConfigMode]);
 
     const applyFacelet = useCallback((str) => {
         if (!str) return;
@@ -133,11 +146,12 @@ export function useRubikCube({ onRotationComplete, isConfigMode = false , config
         );
     }, []);
 
-    const hasUnfilled = cubies.some((c) =>
-        Object.values(c.colors).some((col) => col == null)
-    );
-
-    const isFullyColored = !hasUnfilled;
+    const isFullyColored = (state) =>
+        state.every(c =>
+            Object.values(c.colors).every(col =>
+                col && col !== "#606060"
+            )
+        );
 
     return {
         cubies,

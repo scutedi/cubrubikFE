@@ -1,22 +1,15 @@
 import { useMemo } from "react";
 import * as THREE from "three";
 
-import { FACE_INDEX_TO_NAME } from "../constants/cube";
+import {FACE_INDEX_TO_NAME, GREY} from "../constants/cube";
 
-export default function Cubie({ position, colors, onFaceClick, isConfigMode}) {
-  // Order matches three.js box material faces: +x, -x, +y, -y, +z, -z.
+export default function Cubie({ position, colors, onFaceClick}) {
     const materials = useMemo(() => {
-        const displayColors = [colors.R, colors.L, colors.U, colors.D, colors.F, colors.B];
-
-        return displayColors.map((color) => {
-            const finalColor =
-                isConfigMode && !color ? "#606060" : color;
-
-            return new THREE.MeshBasicMaterial({
-                color: finalColor || "black",
-            });
-        });
-    }, [colors, isConfigMode]);
+        return [colors.R, colors.L, colors.U, colors.D, colors.F, colors.B]
+            .map((c) => new THREE.MeshBasicMaterial({
+                color: c ?? GREY,
+            }));
+    }, [colors]);
 
 
 

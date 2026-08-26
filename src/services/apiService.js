@@ -14,14 +14,12 @@ export async function saveCubeState(token, cubeString) {
             })
         });
 
-        // ❌ nu mai citim de 2 ori response-ul
         const text = await response.text();
 
         if (!response.ok) {
             throw new Error(text || "Request failed");
         }
 
-        // dacă nu returnezi nimic din backend
         return text ? JSON.parse(text) : null;
 
     } catch (err) {

@@ -15,7 +15,6 @@ export default function RotatingGroup({
     const startRef = useRef(null);
     const finishedRef = useRef(false);
 
-    // reset la fiecare rotație nouă
     useEffect(() => {
         startRef.current = null;
         finishedRef.current = false;

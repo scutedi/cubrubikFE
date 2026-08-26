@@ -4,16 +4,18 @@ import { OrbitControls } from "@react-three/drei";
 import Cubie from "./Cubie";
 import RotatingGroup from "./RotatingGroup";
 import {isFaceCenter} from "../utils/cubeGeometry";
+import {GREY} from "../constants/cube";
 
 
 
 export default function CubeScene({ cubies, currentRotation, onFinishRotation, onFaceClick, isConfigMode  }) {
 
-    const getDisplayColor = (color, position, isConfigMode) => {
+    const getDisplayColor = (color, position, face, isConfigMode) => {
         if (!isConfigMode) return color;
 
         if (isFaceCenter(position)) return color;
-        return color ?? "#606060";
+
+        return color ?? GREY;
     };
 
     return (

@@ -13,7 +13,7 @@ export default function ColorPicker({ selectedColor, onSelectColor, canSave, onS
         />
       ))}
 
-      <button onClick={onSave} disabled={!canSave} style={saveButtonStyle(canSave)}>
+      <button onClick={onSave} style={saveButtonStyle(canSave)}>
         Salvare configurare
       </button>
         <button

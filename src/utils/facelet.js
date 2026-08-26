@@ -14,24 +14,52 @@ export function colorToLetter(color, faceColors = FACE_COLORS) {
   }
 }
 
+
 function getFaceGrid(cubies, axis, value, faceKey) {
     const grid = Array(9).fill("X");
 
     cubies
-        .filter((c) => c.position[AXIS_INDEX[axis]] === value)
-        .forEach((c) => {
-
+        .filter(c => c.position[AXIS_INDEX[axis]] === value)
+        .forEach(c => {
             const [x, y, z] = c.position;
+
             let row, col;
 
-            if (axis === "y" && value === 1)        { row = 2 - (z + 1); col = x + 1; }
-            else if (axis === "y" && value === -1)  { row = z + 1;       col = x + 1; }
-            else if (axis === "z" && value === 1)   { row = 2 - (y + 1); col = x + 1; }
-            else if (axis === "z" && value === -1)  { row = 2 - (y + 1); col = 2 - (x + 1); }
-            else if (axis === "x" && value === 1)   { row = 2 - (y + 1); col = 2 - (z + 1); }
-            else                                    { row = 2 - (y + 1); col = z + 1; }
+            switch (faceKey) {
+                case "U":
+                    row = z + 1;
+                    col = x + 1;
+                    break;
 
-            grid[row * 3 + col] = c.colors[faceKey] ?? "X";
+                case "D":
+                    row = 2 - (z + 1);
+                    col = x + 1;
+                    break;
+
+                case "F":
+                    row = 2 - (y + 1);
+                    col = x + 1;
+                    break;
+
+                case "B":
+                    row = 2 - (y + 1);
+                    col = 2 - (x + 1);
+                    break;
+
+                case "R":
+                    row = 2 - (y + 1);
+                    col = 2 - (z + 1);
+                    break;
+
+                case "L":
+                    row = 2 - (y + 1);
+                    col = z + 1;
+                    break;
+            }
+
+            if (row >= 0 && row < 3 && col >= 0 && col < 3) {
+                grid[row * 3 + col] = c.colors[faceKey] ?? "X";
+            }
         });
 
     return grid;

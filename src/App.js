@@ -5,6 +5,7 @@ import { FloatingMenu } from "./Tutorial/TutorialMenu";
 import Logo from "./components/Logo";
 import SolutionControls from "./components/SolutionControls";
 import { saveCubeState, loadCubeState } from "./services/apiService";
+import { useMemo } from "react";
 
 import CubeScene from "./components/CubeScene";
 import Sidebar, { HamburgerButton } from "./components/Sidebar";
@@ -16,6 +17,8 @@ import { generateFaceletString } from "./utils/facelet";
 import { expandMoves } from "./utils/goCubeProtocol";
 import { appBackground, canvasWrapper } from "./ui/styles";
 import {createSolvedCubies} from "./utils/cubeGeometry";
+import {toast} from "react-toastify";
+import {FACE_COLORS, GREY} from "./constants/cube";
 
 const SOLVER_URL = "http://localhost:8080/api/cube/solution";
 
@@ -26,7 +29,7 @@ export default function App() {
     const [showColorPicker, setShowColorPicker] = useState(false);
     const [selectedColor, setSelectedColor] = useState(null);
     const [isConfigMode, setIsConfigMode] = useState(false);
-    const [configCubies, setConfigCubies] = useState(null);
+    const [configCubies, setConfigCubies] = useState(createSolvedCubies());
 
     const [solutionMoves, setSolutionMoves] = useState([]);
     const [selection, setSelection] = useState(null);
@@ -57,7 +60,14 @@ export default function App() {
     const handleDeviceRotation = useCallback(
         ({ face, direction, move }) => {
             setSolutionMoves((prev) => {
-                if (!prev.length || prev[0] !== move) return prev;
+                if (!prev.length) return prev;
+
+                if (prev[0] !== move) {
+                    setSelection(null);
+                    onCloseSolution();
+                    return [];
+                }
+
                 if (selection === "first") {
                     setRemainingFirstMoves((n) => {
                         const next = n - 1;
@@ -65,12 +75,18 @@ export default function App() {
                         return next;
                     });
                 }
+
                 return prev.slice(1);
             });
             enqueueRotation({ face, direction });
         },
         [enqueueRotation, selection]
     );
+
+    const isSolved = useMemo(() => {
+        return generateFaceletString(cubies) ===
+            "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB";
+    }, [cubies]);
 
     const onCloseSolution = () => {
         setSolutionMoves([]);
@@ -139,24 +155,24 @@ export default function App() {
         setSidebarOpen(false);
         setActiveButton("config");
 
-        const base = cubies.map(c => {
-            const newColors = {};
-
-            for (const face of Object.keys(c.colors)) {
-                const originalColor = c.colors[face];
-
-                if (c.position.includes(0) && Object.values(c.position).filter(v => v === 0).length === 2) {
-                    newColors[face] = originalColor;
-                }
-                else {
-                    newColors[face] = "#606060";
-                }
-            }
-
-            return {
-                ...c,
-                colors: newColors
+        const base = structuredClone(cubies).map(c => {
+            const colors = {
+                U: GREY,
+                D: GREY,
+                L: GREY,
+                R: GREY,
+                F: GREY,
+                B: GREY,
             };
+
+            if (c.position[0] === 0 && c.position[1] === 1 && c.position[2] === 0) colors.U = FACE_COLORS.U;
+            if (c.position[0] === 0 && c.position[1] === -1 && c.position[2] === 0) colors.D = FACE_COLORS.D;
+            if (c.position[0] === 1 && c.position[1] === 0 && c.position[2] === 0) colors.R = FACE_COLORS.R;
+            if (c.position[0] === -1 && c.position[1] === 0 && c.position[2] === 0) colors.L = FACE_COLORS.L;
+            if (c.position[0] === 0 && c.position[1] === 0 && c.position[2] === 1) colors.F = FACE_COLORS.F;
+            if (c.position[0] === 0 && c.position[1] === 0 && c.position[2] === -1) colors.B = FACE_COLORS.B;
+
+            return { ...c, colors };
         });
 
         setConfigCubies(base);
@@ -177,16 +193,38 @@ export default function App() {
         );
     };
 
+    const isConfigComplete = (cubies) => {
+        return cubies.every(c => {
+            const [x, y, z] = c.position;
+
+            const requiredFaces = [];
+
+            if (y === 1) requiredFaces.push("U");
+            if (y === -1) requiredFaces.push("D");
+            if (x === 1) requiredFaces.push("R");
+            if (x === -1) requiredFaces.push("L");
+            if (z === 1) requiredFaces.push("F");
+            if (z === -1) requiredFaces.push("B");
+
+            return requiredFaces.every(face =>
+                c.colors[face] &&
+                c.colors[face] !== GREY
+            );
+        });
+    };
+
     const saveConfig = async () => {
         if (!user?.id || !configCubies) return;
 
-        if (!hasNoGrey(configCubies)) {
+
+        console.log(isConfigComplete)
+        if (!isConfigComplete) {
+            toast.error("Completează toate fețele");
             return;
         }
+        setShowColorPicker(false);
 
         setIsConfigMode(false);
-        setShowColorPicker(false);
-        startNotifications();
 
         const facelet = generateFaceletString(configCubies);
 
@@ -261,6 +299,7 @@ export default function App() {
                     setSelection={setSelection}
                     onCloseSolution={onCloseSolution}
                     onGenerateSolution={requestSolution}
+                    isSolved={isSolved}
                 />
             )}
 
@@ -268,7 +307,12 @@ export default function App() {
                 <ColorPicker
                     selectedColor={selectedColor}
                     onSelectColor={setSelectedColor}
-                    canSave={isFullyColored}
+                    canSave={
+                        configCubies &&
+                        configCubies.every(c =>
+                            Object.values(c.colors).every(col => col && col !== "#606060")
+                        )
+                    }
                     onSave={saveConfig}
                     onReset={resetConfig}
                 />

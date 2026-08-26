@@ -23,17 +23,18 @@ export const applyFaceletStringToCubies = (cubies, faceletString, FACE_COLORS) =
 
         const setColor = (faceKey, index) => {
             const letter = faces[faceKey][index];
+
             newColors[faceKey] = letterToColor(letter, FACE_COLORS);
         };
 
         if (y === 1) {
-            const row = 2 - (z + 1);
+            const row = (z + 1);
             const col = x + 1;
             setColor('U', row * 3 + col);
         }
 
         if (y === -1) {
-            const row = z + 1;
+            const row = 2 - (z + 1);
             const col = x + 1;
             setColor('D', row * 3 + col);
         }

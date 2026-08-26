@@ -6,11 +6,14 @@ export default function SolutionControls({
                                              solutionMoves
                                              , selection, setSelection,
                                              onCloseSolution,
-                                             onGenerateSolution
+                                             onGenerateSolution,
+                                             isSolved
                                          }) {
     const [loading, setLoading] = useState(false);
 
     const handleAction = async (type) => {
+        if (isSolved) return;
+
         setSelection(type);
         setLoading(true);
         try {
@@ -41,19 +44,29 @@ export default function SolutionControls({
                     >
                         <button
                             onClick={() => handleAction('all')}
-                            style={compactBtnStyle}
+                            disabled={isSolved}
+                            style={{
+                                ...compactBtnStyle,
+                                ...(isSolved)
+                            }}
                             className="btn-minimal"
                         >
                             📖 Tot
                         </button>
                         <button
                             onClick={() => handleAction('first')}
-                            style={compactBtnStyle}
+                            disabled={isSolved}
+                            style={{
+                                ...compactBtnStyle,
+                                ...(isSolved)
+                            }}
                             className="btn-minimal"
                         >
                             ☝️ Primul pas
                         </button>
                     </motion.div>
+
+
                 )}
 
                 {loading && (
