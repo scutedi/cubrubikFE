@@ -19,6 +19,14 @@ După logare, sistemul încarcă automat starea salvată a cubului din baza de d
 Meniul lateral pliabil (`RubikWeb`) oferă acces rapid la calibrare, configurare manuală a culorilor și starea conexiunii Bluetooth cu Smart Cube-ul.
 <img width="1023" height="520" alt="image" src="https://github.com/user-attachments/assets/3369b476-be31-469e-9946-691b923f8bbd" />
 
+### 4. Rezolvare Asistată — Indiciu Single Move („Primul Pas”)
+La apăsarea butonului **Primul pas**, aplicația generează doar prima mișcare necesară pentru rezolvare, afișând notația oficială WCA (ex: `F`) alături de o diagramă 2D explicativă (Pas 1 / 1).
+<img width="1024" height="517" alt="image" src="https://github.com/user-attachments/assets/ce184115-3c9f-4015-b880-79ff1f184e0b" />
+
+### 5. Rezolvare Asistată — Algoritm Complet („Tot”)
+La apăsarea butonului **Tot**, algoritmul generează secvența completă de rezolvare (ex: Pas 1 / 2) cu navigare interactivă `Prev` / `Next` prin fiecare mișcare individuală.
+<img width="1024" height="519" alt="image" src="https://github.com/user-attachments/assets/1a0ba4ed-93aa-4586-9efb-158f28080355" />
+
 
 ---
 
