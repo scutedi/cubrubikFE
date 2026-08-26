@@ -1,70 +1,57 @@
-# Getting Started with Create React App
+# 🧩 RUBLUT — Interactive 3D Rubik's Cube Solver & Trainer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**RUBLUT** este o aplicație web full-stack modernă creată pentru interacțiunea, vizualizarea 3D și rezolvarea asistată a cubului Rubik. Aceasta integrează conectivitate prin **Bluetooth Low Energy (BLE)** cu un Smart Cube hardware, algoritmi de asistare pas-cu-pas și salvarea automată a stării cubului în baza de date pentru utilizatorii autentificați.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 📸 Screenshots & Prezentare
 
-### `npm start`
+### 1. Vizualizare Vizitator (Guest View)
+La accesarea platformei fără autentificare, utilizatorul poate vizualiza modelul 3D interactiv și accesa ghidurile educaționale.
+<img width="1024" height="520" alt="image" src="https://github.com/user-attachments/assets/21f83ebb-bc0b-4210-a1c5-756d2d9ccc15" />
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 2. Tablou de Bord (Utilizator Autentificat)
+După logare, sistemul încarcă automat starea salvată a cubului din baza de date. Sunt activate opțiunile de rezolvare asistată (**Tot** / **Primul pas**) și este afișată urarea personalizată.
+<img width="1024" height="519" alt="image" src="https://github.com/user-attachments/assets/1bf317f0-f547-4a94-99e8-0275fc4f7bf8" />
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
+### 3. Meniu Lateral & Conectivitate Hardware
+Meniul lateral pliabil (`RubikWeb`) oferă acces rapid la calibrare, configurare manuală a culorilor și starea conexiunii Bluetooth cu Smart Cube-ul.
+<img width="1023" height="520" alt="image" src="https://github.com/user-attachments/assets/3369b476-be31-469e-9946-691b923f8bbd" />
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🚀 Funcționalități Principale
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* **Model 3D Interactiv:** Randare 3D în timp real utilizând Three.js / React Three Fiber.
+* **Autentificare & Persistență:** Înregistrare/logare securizată cu salvarea automată a stării curente a cubului în baza de date MySQL.
+* **Rezolvare Asistată (Solvers):**
+  * **Primul pas:** Oferă un indiciu pentru următoarea mișcare optimă.
+  * **Tot:** Calculează și execută secvența completă de rezolvare (algoritmi Kociemba / LBL).
+* **Sincronizare BLE (Bluetooth):** Conectare directă din browser la Smart Cubes (ex: GoCube) prin Web Bluetooth API.
+* **Meniu de Misiuni & Setări:** Opțiuni dedicate pentru calibrare, personalizare culori și navigare intuitivă.
+* **Modul Tutoriale:** Resurse educaționale integrate pentru învățarea metodelor de rezolvare (LBL, CFOP, Roux).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## 🛠️ Stack Tehnologic
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+* **Frontend:** React.js, React Three Fiber (Three.js), Web Bluetooth API, CSS3 / Tailwind CSS
+* **Backend:** Spring Boot (Java)
+* **Bază de date:** MySQL
+* **Protocol Hardware:** Bluetooth Low Energy (BLE)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 📦 Instalare și Rulare Locală
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Cerințe preliminare
+* **Node.js** (v16+)
+* **Java JDK** (v17+)
+* **MySQL Server**
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### 1. Clonare repository
+```bash
+git clone [https://github.com/scutedi/Rubik-Cube-App.git](https://github.com/scutedi/Rubik-Cube-App.git)
+cd Rubik-Cube-App
